@@ -1,0 +1,6 @@
+tmp/
+testdata/
+*.log
+.git
+.gitignore
+.env

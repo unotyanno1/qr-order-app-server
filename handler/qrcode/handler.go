@@ -30,13 +30,14 @@ func (h *Handler) GetQRCode(c echo.Context) error {
 		SeatNumber: seatNumber,
 	}
 
-	if err := h.useCase.GetQRCode(req); err != nil {
+	result, err := h.useCase.GetQRCode(req);
+	if err != nil{
 		return c.JSON(http.StatusInternalServerError, map[string]string{
 			"error": err.Error(),
 		})
 	}
 
 	return c.JSON(http.StatusOK, map[string]string{
-		"seat_number111": seatNumber,
+		"result": result,
 	})
 }

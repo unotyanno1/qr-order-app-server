@@ -16,6 +16,7 @@ jobs:
       contents: read
       pull-requests: write
       issues: write
+      id-token: write
 
     steps:
       - name: Checkout
@@ -25,19 +26,27 @@ jobs:
         uses: anthropics/claude-code-action@v1
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
 
           direct_prompt: |
             このPRをレビューしてください。
 
             以下を重点確認:
-            - バグ
-            - Goベストプラクティス
-            - Next.jsベストプラクティス
-            - セキュリティ
-            - N+1
-            - goroutine misuse
-            - 可読性
+            - バグや例外漏れ
+            - セキュリティリスク
+            - DB/API設計の妥当性
+            - Goのベストプラクティス
+            - goroutine misuse / goroutine leak
+            - N+1問題
+            - Next.js / TypeScriptのベストプラクティス
             - テスト不足
+            - 可読性
+            - 過剰設計
 
-            指摘は重要度順。
-            必要なら修正案も出してください。
+            指摘は重要度順にしてください。
+            各指摘には以下を含めてください。
+            - 問題点
+            - 理由
+            - 修正案
+
+            問題がない場合は、良い点も簡潔にコメントしてください。

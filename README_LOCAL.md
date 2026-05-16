@@ -253,7 +253,7 @@ go run main.go
 #### Airを使用したホットリロード起動（推奨）
 ```bash
 # Airがインストールされていない場合
-go install github.com/cosmtrek/air@latest
+go install github.com/air-verse/air@latest
 
 # Airで起動
 air -c .air.toml

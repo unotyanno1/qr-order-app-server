@@ -27,8 +27,7 @@ jobs:
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
-
-          direct_prompt: |
+          prompt: |
             このPRをレビューしてください。
 
             以下を重点確認:
@@ -49,4 +48,5 @@ jobs:
             - 理由
             - 修正案
 
-            問題がない場合は、良い点も簡潔にコメントしてください。
+            PRにレビューコメントとして投稿してください。
+            問題がない場合も、LGTMですとコメントしてください。

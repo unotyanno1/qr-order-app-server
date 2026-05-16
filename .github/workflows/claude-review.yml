@@ -25,28 +25,24 @@ jobs:
       - name: Claude Code Review
         uses: anthropics/claude-code-action@v1
         with:
-          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
+
           prompt: |
             このPRをレビューしてください。
 
             以下を重点確認:
-            - バグや例外漏れ
-            - セキュリティリスク
-            - DB/API設計の妥当性
-            - Goのベストプラクティス
-            - goroutine misuse / goroutine leak
-            - N+1問題
-            - Next.js / TypeScriptのベストプラクティス
+            - バグ
+            - セキュリティ
+            - Goベストプラクティス
+            - goroutine leak
+            - N+1
+            - Next.js best practices
             - テスト不足
             - 可読性
-            - 過剰設計
 
-            指摘は重要度順にしてください。
-            各指摘には以下を含めてください。
-            - 問題点
+            問題点:
             - 理由
             - 修正案
-
-            PRにレビューコメントとして投稿してください。
-            問題がない場合も、LGTMですとコメントしてください。
+            を含めてレビューしてください。
+            何も問題なければ、LGTMとコメントしてください。

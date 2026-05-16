@@ -19,30 +19,41 @@ jobs:
       id-token: write
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Claude Code Review
-        uses: anthropics/claude-code-action@v1
+      - uses: anthropics/claude-code-action@v1
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
+          trigger_phrase: "/claude"
+
+          use_sticky_comment: true
+          classify_inline_comments: true
+          display_report: true
+          show_full_output: true
+
           prompt: |
-            このPRをレビューしてください。
+            このPRをコードレビューしてください。
 
             以下を重点確認:
             - バグ
-            - セキュリティ
             - Goベストプラクティス
             - goroutine leak
             - N+1
-            - Next.js best practices
+            - Next.js / TypeScript best practices
+            - セキュリティ
             - テスト不足
             - 可読性
+            - 過剰設計
 
-            問題点:
+            問題がある場合:
+            - 問題点
             - 理由
             - 修正案
             を含めてレビューしてください。
-            何も問題なければ、LGTMとコメントしてください。
+
+            問題がない場合:
+            必ず "LGTM" とコメントしてください。
+
+            レビュー結果は必ずGitHub PR commentとして投稿してください。

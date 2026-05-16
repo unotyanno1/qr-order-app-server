@@ -38,6 +38,6 @@ func (h *Handler) GetQRCode(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, map[string]string{
-		"result": result,
+		"result_test": result,
 	})
 }

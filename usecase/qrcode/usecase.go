@@ -2,6 +2,7 @@ package qrcode
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 	"log"
 	"os"
@@ -10,8 +11,10 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 
 	"github.com/unotyanno1/qr-order-app-server/domain/qrcode"
-
 )
+
+// ErrInvalidSeatNumber は座席番号が不正な形式の場合に返される。
+var ErrInvalidSeatNumber = errors.New("invalid seat number")
 
 // UseCase handles QR code business logic
 type UseCase struct{}
@@ -57,7 +60,7 @@ func (uc *UseCase) GetQRCode(req *qrcode.QRCodeRequest) (string, error) {
 	// seat_idを整数に変換
 	seatID, err := strconv.Atoi(req.SeatNumber)
 	if err != nil {
-		return "",fmt.Errorf("invalid seat number: %s", req.SeatNumber)
+		return "", fmt.Errorf("%w: %s", ErrInvalidSeatNumber, req.SeatNumber)
 	}
 
 	// データベース接続を取得

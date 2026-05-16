@@ -1,0 +1,43 @@
+name: Claude Review
+
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  claude-review:
+    if: |
+      github.event.issue.pull_request &&
+      startsWith(github.event.comment.body, '/claude')
+
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      pull-requests: write
+      issues: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Claude Code Review
+        uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+
+          direct_prompt: |
+            このPRをレビューしてください。
+
+            以下を重点確認:
+            - バグ
+            - Goベストプラクティス
+            - Next.jsベストプラクティス
+            - セキュリティ
+            - N+1
+            - goroutine misuse
+            - 可読性
+            - テスト不足
+
+            指摘は重要度順。
+            必要なら修正案も出してください。

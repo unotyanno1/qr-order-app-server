@@ -1,13 +1,13 @@
 package qrcode
 
 import (
+	"errors"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
 
 	qrcodedomain "github.com/unotyanno1/qr-order-app-server/domain/qrcode"
 	qrcodeusecase "github.com/unotyanno1/qr-order-app-server/usecase/qrcode"
-
 )
 
 // Handler handles HTTP requests for QR code operations
@@ -33,6 +33,16 @@ func (h *Handler) GetQRCode(c echo.Context) error {
 	result, err := h.useCase.GetQRCode(req)
 	if err != nil {
 		c.Logger().Error(err)
+		if errors.Is(err, qrcodeusecase.ErrInvalidSeatNumber) {
+			return c.JSON(http.StatusBadRequest, map[string]string{
+				"error": "invalid seat number",
+			})
+		}
+		if errors.Is(err, qrcodeusecase.ErrSeatNotFound) {
+			return c.JSON(http.StatusNotFound, map[string]string{
+				"error": "seat not found",
+			})
+		}
 		return c.JSON(http.StatusInternalServerError, map[string]string{
 			"error": "internal server error",
 		})

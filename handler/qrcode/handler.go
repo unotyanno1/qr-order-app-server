@@ -7,7 +7,6 @@ import (
 
 	qrcodedomain "github.com/unotyanno1/qr-order-app-server/domain/qrcode"
 	qrcodeusecase "github.com/unotyanno1/qr-order-app-server/usecase/qrcode"
-
 )
 
 // Handler handles HTTP requests for QR code operations
@@ -32,12 +31,13 @@ func (h *Handler) GetQRCode(c echo.Context) error {
 
 	result, err := h.useCase.GetQRCode(req);
 	if err != nil{
+		c.Logger().Error(err)
 		return c.JSON(http.StatusInternalServerError, map[string]string{
-			"error": err.Error(),
+			"error": "internal server error",
 		})
 	}
 
 	return c.JSON(http.StatusOK, map[string]string{
-		"result_test": result,
+		"result": result,
 	})
 }

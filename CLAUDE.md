@@ -10,7 +10,6 @@ Claude Code は Pull Request のレビューのみを行う。
 - push
 - ファイル変更
 - PR作成
-- Issue作成
 
 レビューコメントのみ投稿すること。
 

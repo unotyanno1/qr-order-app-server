@@ -32,7 +32,7 @@ erDiagram
 
 | カラム | 型 | NULL | 説明 |
 | --- | --- | --- | --- |
-| id | BIGINT | NO | 店舗ID |
+| id | TINYINT(UNSIGNED) | NO | 店舗ID |
 | name | VARCHAR(255) | NO | 店舗名 |
 | created_at | DATETIME | NO | 作成日時 |
 | updated_at | DATETIME | NO | 更新日時 |
@@ -45,9 +45,9 @@ erDiagram
 
 | カラム | 型 | NULL | 説明 |
 | --- | --- | --- | --- |
-| id | BIGINT | NO | テーブルID |
-| store_id | BIGINT | NO | 店舗ID |
-| table_number | INT | NO | 店舗内のテーブル番号 |
+| id | SMALLINT(UNSIGNED) | NO | テーブルID |
+| store_id | TINYINT(UNSIGNED) | NO | 店舗ID |
+| table_number | TINYINT(UNSIGNED) | NO | 店舗内のテーブル番号 |
 | created_at | DATETIME | NO | 作成日時 |
 | updated_at | DATETIME | NO | 更新日時 |
 
@@ -64,9 +64,9 @@ erDiagram
 | カラム | 型 | NULL | 説明 |
 | --- | --- | --- | --- |
 | id | BIGINT | NO | テーブル利用セッションID |
-| table_id | BIGINT | NO | テーブルID |
+| table_id | SMALLINT(UNSIGNED) | NO | テーブルID |
 | guest_no | INT | NO | 客番号 |
-| status | VARCHAR | NO | 利用状態 |
+| status | TINYINT(1) | NO | 利用状態(0=OPEN,1=CLOSED) |
 | started_at | DATETIME | NO | 利用開始日時 |
 | closed_at | DATETIME | NO | 利用終了日時 |
 | created_at | DATETIME | NO | 作成日時 |
@@ -84,19 +84,21 @@ erDiagram
 
 | カラム | 型 | NULL | 説明 |
 | --- | --- | --- | --- |
-| id | BIGINT | NO | メニューID |
-| store_id | BIGINT | NO | 店舗ID |
-| name | VARCHAR | NO | メニュー名 |
-| price | INT | NO | 販売価格 |
+| id | MEDIUMINT(UNSIGNED) | NO | メニューID |
+| store_id | TINYINT(UNSIGNED) | NO | 店舗ID |
+| name | VARCHAR(255) | NO | メニュー名 |
+| price | SMALLINT(UNSIGNED) | NO | 販売価格 |
 | description | TEXT | YES | メニュー説明 |
-| image_url | VARCHAR | YES | メニュー画像URL |
-| is_available | BOOLEAN | NO | 注文可能か |
+| image_url | VARCHAR(255) | YES | メニュー画像URL |
+| is_available | TINYINT(1) | NO | 注文可能か |
 | created_at | DATETIME | NO | 作成日時 |
 | updated_at | DATETIME | NO | 更新日時 |
 
 ### Foreign Key
 
 - store_id -> stores.id
+
+---
 
 ### orders
 
@@ -115,6 +117,8 @@ erDiagram
 
 - table_session_id -> table_sessions.id
 
+---
+
 ### order_items
 
 注文に含まれる商品を管理する。
@@ -124,9 +128,9 @@ erDiagram
 | id | BIGINT | NO | 注文明細ID |
 | order_id | BIGINT | NO | 注文ID |
 | menu_id | BIGINT | NO | メニューID |
-| quantity | INT | NO | 注文数量 |
-| unit_price | INT | NO | 注文時点の商品単価 |
-| status | VARCHAR | NO | 提供状態 |
+| quantity | TINYINT(UNSIGNED) | NO | 注文数量 |
+| unit_price | SMALLINT(UNSIGNED) | NO | 注文時点の商品単価 |
+| status | TINYINT(1) | NO | 提供状態(0=UNSERVED,1=SERVED) |
 | created_at | DATETIME | NO | 作成日時 |
 | updated_at | DATETIME | NO | 更新日時 |
 
@@ -134,6 +138,8 @@ erDiagram
 
 - order_id -> orders.id
 - menu_id -> menus.id
+
+---
 
 ### table_sales
 
@@ -152,6 +158,8 @@ erDiagram
 
 - table_session_id -> table_sessions.id
 
+---
+
 ### admin_users
 
 店舗管理画面へログインするユーザーを管理する。
@@ -159,9 +167,9 @@ erDiagram
 | カラム | 型 | NULL | 説明 |
 | --- | --- | --- | --- |
 | id | BIGINT | NO | 管理ユーザーID |
-| store_id | BIGINT | NO | 店舗ID |
-| email | VARCHAR | NO | ログイン用メールアドレス |
-| password_hash | VARCHAR | NO | ハッシュ化したパスワード |
+| store_id | TINYINT(UNSIGNED) | NO | 店舗ID |
+| email | VARCHAR(255) | NO | ログイン用メールアドレス |
+| password_hash | VARCHAR(255) | NO | ハッシュ化したパスワード |
 | created_at | DATETIME | NO | 作成日時 |
 | updated_at | DATETIME | NO | 更新日時 |
 
@@ -175,3 +183,7 @@ erDiagram
 - 注文時点の商品価格を order_items.unit_price に保存する
 - 提供状態は注文単位ではなく注文明細単位で管理する
 - 会計完了時に table_sales を作成し、table_sessions.status を CLOSED に変更する
+
+## 備考
+
+- 店舗数・注文量の増加により単一DBがボトルネックになった場合は、store_id をシャードキーとした店舗単位の水平分割を検討する。

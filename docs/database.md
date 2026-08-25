@@ -6,10 +6,9 @@
 
 RAGで使用するベクトルデータはPostgreSQL + pgvectorで管理する。
 
----
-
 ## ER図
 
+```mermaid
 erDiagram
     stores ||--o{ tables : has
     stores ||--o{ menus : has
@@ -23,8 +22,7 @@ erDiagram
     orders ||--o{ order_items : has
     
     menus ||--o{ order_items : referenced_by
-
----
+```
 
 ## テーブル定義
 
@@ -42,8 +40,6 @@ erDiagram
 ### Foreign Key
 
 なし
-
----
 
 - id
 - name

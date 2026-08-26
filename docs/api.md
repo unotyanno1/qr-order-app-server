@@ -5,6 +5,8 @@
 - Base URL: `/api/v1`
 - Content-Type: `application/json`
 - APIのレスポンスはJSON形式
+- カート情報はフロントエンド側で保持し、DBには保存しない
+- 商品価格や販売状態はフロントエンドから送信された値を信用せず、サーバー側でDBのメニュー情報を参照する
 - エラー時はHTTPステータスコードとエラーメッセージを返す
 
 # Customer API
@@ -89,109 +91,36 @@ GET ```/api/v1/stores/{store_id}/menus```
 }
 ```
 
-## カート取得
-
-現在のセッションのカート内容を取得する。
-
-### Endpoint
-
-GET ```/api/v1/sessions/{session_id}/cart```
-
-### Request
-
-なし
-
-### Response
-
-#### 200 OK
-
-```json
-{
-  "items": [
-    {
-      "menu_id": 1,
-      "name": "醤油ラーメン",
-      "unit_price": 900,
-      "quantity": 2
-    }
-  ],
-  "total_price": 1800
-}
-```
-
-## カート追加
-
-メニューをカートに追加する。
-
-### Endpoint
-
-POST ```/api/v1/sessions/{session_id}/cart/items```
-
-### Request
-
-```json
-{
-  "menu_id": 1,
-  "quantity": 2
-}
-```
-
-### Response
-
-#### 201 Created
-
-```json
-{
-  "menu_id": 1,
-  "quantity": 2
-}
-```
-
-### Error
-
-#### 400 Bad Request
-
-```json
-{
-  "message": "invalid quantity"
-}
-```
-
-#### 409 Conflict
-
-```json
-{
-  "message": "menu is not available"
-}
-```
-
-## カートの商品削除
-
-### Endpoint
-
-DELETE ```/api/v1/sessions/{session_id}/cart/items/{menu_id}```
-
-### Request
-
-なし
-
-### Response
-
-#### 204 No Content
-
-レスポンスボディなし
-
 ## 注文確定
 
-カートの商品を注文として確定する。
+フロントエンドで保持しているカートの商品を注文として確定する。
 
 ### Endpoint
 
 POST ```/api/v1/sessions/{session_id}/orders```
 
+### Path Parameters
+
+| Name | Type | Required | Description |
+|---|---|---|---|
+| session_id | BIGINT | Yes | テーブル利用セッションID |
+
 ### Request
 
-なし(※注文内容はサーバー側で現在のカートから取得する)
+```json
+{
+    "items": [
+        {
+            "menu_id": 1,
+            "quantity": 2
+        },
+        {
+            "menu_id": 2,
+            "quantity": 1
+        }
+    ]
+}
+```
 
 ### Response
 
@@ -213,11 +142,51 @@ POST ```/api/v1/sessions/{session_id}/orders```
 }
 ```
 
+### Error
+
+#### 400 Bad Request
+
+注文数などの入力値が不正な場合。
+
+```json
+{
+    "message": "invalid quantity"
+}
+```
+
+#### 404 Not Found
+
+指定されたセッションまたはメニューが存在しない場合。
+
+```json
+{
+    "message": "menu not found"
+}
+```
+
+#### 409 Conflict
+
+販売停止中の商品が含まれている場合。
+
+```json
+{
+    "message": "menu is not available"
+}
+```
+
 ## 注文履歴取得
+
+現在のセッションで注文した商品を取得する。
 
 ### Endpoint
 
 GET ```/api/v1/sessions/{session_id}/orders```
+
+### Path Parameters
+
+| Name | Type | Required | Description |
+|---|---|---|---|
+| session_id | BIGINT | Yes | テーブル利用セッションID |
 
 ### Request
 
@@ -257,6 +226,12 @@ GET ```/api/v1/sessions/{session_id}/orders```
 
 GET ```/api/v1/stores/{store_id}/orders```
 
+### Path Parameters
+
+| Name | Type | Required | Description |
+|---|---|---|---|
+| store_id | SMALLINT | Yes | 店舗ID |
+
 ### Request
 
 なし
@@ -292,6 +267,12 @@ GET ```/api/v1/stores/{store_id}/orders```
 
 PATCH ```/api/v1/order-items/{order_item_id}/status```
 
+### Path Parameters
+
+| Name | Type | Required | Description |
+|---|---|---|---|
+| order_item_id | BIGINT | Yes | 注文明細ID |
+
 ### Request
 
 ```json
@@ -318,11 +299,27 @@ PATCH ```/api/v1/order-items/{order_item_id}/status```
 }
 ```
 
+### Error
+
+#### 404 Not Found
+
+```json
+{
+    "message": "order item not found"
+}
+```
+
 ## メニュー販売状態変更
 
 ### Endpoint
 
 PATCH ```/api/v1/menus/{menu_id}/availability```
+
+### Path Parameters
+
+| Name | Type | Required | Description |
+|---|---|---|---|
+| menu_id | SMALLINT | Yes | メニューID |
 
 ### Request
 
@@ -340,6 +337,16 @@ PATCH ```/api/v1/menus/{menu_id}/availability```
 {
   "menu_id": 1,
   "is_available": false
+}
+```
+
+### Error
+
+#### 404 Not Found
+
+```json
+{
+    "message": "menu not found"
 }
 ```
 

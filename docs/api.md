@@ -36,6 +36,7 @@ POST `/api/v1/tables/{table_id}/sessions`
   "session_id": 123,
   "table_id": 10
 }
+```
 
 ### Error
 
@@ -45,3 +46,4 @@ POST `/api/v1/tables/{table_id}/sessions`
 {
   "message": "table not found"
 }
+```

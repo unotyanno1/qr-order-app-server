@@ -55,6 +55,10 @@ erDiagram
 
 - store_id -> stores.id
 
+### Unique Constraint
+
+- (store_id, table_number)
+
 ---
 
 ### table_sessions
@@ -68,7 +72,7 @@ erDiagram
 | guest_no | INT | NO | 客番号 |
 | status | TINYINT(1) | NO | 利用状態(0=OPEN,1=CLOSED) |
 | started_at | DATETIME | NO | 利用開始日時 |
-| closed_at | DATETIME | NO | 利用終了日時 |
+| closed_at | DATETIME | YES | 利用終了日時 |
 | created_at | DATETIME | NO | 作成日時 |
 | updated_at | DATETIME | NO | 更新日時 |
 
@@ -127,7 +131,7 @@ erDiagram
 | --- | --- | --- | --- |
 | id | BIGINT | NO | 注文明細ID |
 | order_id | BIGINT | NO | 注文ID |
-| menu_id | BIGINT | NO | メニューID |
+| menu_id | MEDIUMINT(UNSIGNED) | NO | メニューID |
 | quantity | TINYINT(UNSIGNED) | NO | 注文数量 |
 | unit_price | SMALLINT(UNSIGNED) | NO | 注文時点の商品単価 |
 | status | TINYINT(1) | NO | 提供状態(0=UNSERVED,1=SERVED) |
@@ -158,6 +162,10 @@ erDiagram
 
 - table_session_id -> table_sessions.id
 
+### Unique Constraint
+
+- table_session_id
+
 ---
 
 ### admin_users
@@ -176,6 +184,10 @@ erDiagram
 ### Foreign Key
 
 - store_id -> stores.id
+
+### Unique Constraint
+
+- email
 
 ## 設計方針
 

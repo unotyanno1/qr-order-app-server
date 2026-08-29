@@ -14,7 +14,7 @@ RUN go mod download
 
 # airをインストール（依存関係取得後）
 # リポジトリがgithub.com/air-verse/airに移行したため、新しいパスを使用
-RUN go install github.com/air-verse/air@latest
+RUN go install github.com/air-verse/air@v1.64.5
 
 # PATHにGOPATH/binを追加
 ENV PATH=$PATH:/go/bin

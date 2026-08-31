@@ -8,7 +8,7 @@ jobs:
   claude-review:
     if: |
       github.event.issue.pull_request &&
-      startsWith(github.event.comment.body, '/claude') &&
+      startsWith(github.event.comment.body, '/code-review') &&
       github.event.comment.user.login != 'github-actions[bot]'
 
     runs-on: ubuntu-latest

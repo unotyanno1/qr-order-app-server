@@ -1,28 +1,19 @@
 package database
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
-	"os"
+
+	"time"
+
+	"github.com/unotyanno1/qr-order-app-server/internal/config"
 
 	_ "github.com/go-sql-driver/mysql"
 )
 
-func NewMySQL() (*sql.DB, error) {
-	user := os.Getenv("DB_USER")
-	password := os.Getenv("DB_PASSWORD")
-	host := os.Getenv("DB_HOST")
-	port := os.Getenv("DB_PORT")
-	dbName := os.Getenv("DB_NAME")
-
-	dsn := fmt.Sprintf(
-		"%s:%s@tcp(%s:%s)/%s?parseTime=true&timeout=5s",
-		user,
-		password,
-		host,
-		port,
-		dbName,
-	)
+func NewMySQL(cfg config.Config) (*sql.DB, error) {
+	dsn := buildDSN(cfg)
 
 	db, err := sql.Open("mysql", dsn)
 	if err != nil {
@@ -38,4 +29,15 @@ func NewMySQL() (*sql.DB, error) {
 	}
 
 	return db, nil
+}
+
+func buildDSN(cfg config.Config) string {
+	return fmt.Sprintf(
+		"%s:%s@tcp(%s:%s)/%s?parseTime=true&timeout=5s",
+		cfg.DBUser,
+		cfg.DBPassword,
+		cfg.DBHost,
+		cfg.DBPort,
+		cfg.DBName,
+	)
 }

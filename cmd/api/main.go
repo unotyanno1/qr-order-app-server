@@ -17,4 +17,13 @@ func main() {
 	defer db.Close()
 
 	log.Println("database connected")
+
+	var count int
+
+	err = db.QueryRow("SELECT COUNT(*) FROM stores").Scan(&count)
+	if err != nil {
+		log.Fatalf("failed to query stores: %v", err)
+	}
+
+	log.Printf("stores count: %d", count)
 }

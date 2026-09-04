@@ -6,7 +6,7 @@ export GOOSE_DRIVER
 export GOOSE_DBSTRING
 export GOOSE_MIGRATION_DIR
 
-.PHONY: migrate-up migrate-down migrate-status
+.PHONY: migrate-up migrate-down migrate-status seed
 
 migrate-up:
 	goose up
@@ -16,3 +16,6 @@ migrate-down:
 
 migrate-status:
 	goose status
+
+seed:
+	docker compose exec -T db mysql -uroot -ppassword qr_order_db < seeds/development.sql
